@@ -3,7 +3,6 @@ import {StyleSheet, TextInput, Text, View, Button} from 'react-native';
 
 import PlaceInput from './src/components/PlaceInput/PlaceInput';
 import PlaceList from './src/components/PlaceList/PlaceList';
-import placeImage from './src/assets/beautiful-place.jpeg';
 
 export default class App extends React.Component {
     state = {
@@ -17,7 +16,9 @@ export default class App extends React.Component {
                 places: prevState.places.concat({
                     key: Math.random(),
                     name:place,
-                    image:placeImage
+                    image:{
+                        uri:'https://www.geekyexplorer.com/wp-content/uploads/2017/04/must-visit-places-siquijor-island-cambuhagay-falls.jpg'
+                    }
                     })
             }
         });
