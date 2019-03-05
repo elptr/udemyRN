@@ -3,10 +3,13 @@ import {StyleSheet, TextInput, Text, View, Button} from 'react-native';
 
 import PlaceInput from './src/components/PlaceInput/PlaceInput';
 import PlaceList from './src/components/PlaceList/PlaceList';
+import PlaceDetail from './src/components/PlaceDetail/PlaceDetail';
+
 
 export default class App extends React.Component {
     state = {
         places:[],
+        selectedPlace:null
     }
 
 
@@ -23,13 +26,31 @@ export default class App extends React.Component {
             }
         });
     }
-    onItemDeleteHandler = (key) => {
+    onPlaceSelectedHandler = key => {
         this.setState( prevState => {
             return {
-                places: prevState.places.filter((place) =>{
-                    return place.key !== key
-                } )
+                selectedPlace:prevState.places.find( place => {
+                    return place.key === key;
+                })
             }
+        })
+
+    }
+
+    placeDeletedHandler = () => {
+        this.setState(prevState => {
+                return {
+                    places: prevState.places.filter( place => {
+                        return place.key !== prevState.selectedPlace.key
+                    }),
+                    selectedPlace:null
+                }
+            })
+    }
+
+    modalClosed = () => {
+        this.setState({
+            selectedPlace:null
         })
     }
 
@@ -37,10 +58,15 @@ export default class App extends React.Component {
 
         return (
             <View style={styles.container}>
+                <PlaceDetail
+                    selectedPlace={this.state.selectedPlace}
+                    onItemDeleted={this.placeDeletedHandler}
+                    onItemClosed={this.modalClosed}
+                />
                 <PlaceInput onPlaceAdded={this.onPlaceAddedHandler}/>
                 <PlaceList
                     places={this.state.places}
-                    onItemDelete={this.onItemDeleteHandler}/>
+                    onPlaceSelected={this.onPlaceSelectedHandler}/>
             </View>
         );
     }
