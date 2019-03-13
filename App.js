@@ -4,54 +4,27 @@ import {StyleSheet, TextInput, Text, View, Button} from 'react-native';
 import PlaceInput from './src/components/PlaceInput/PlaceInput';
 import PlaceList from './src/components/PlaceList/PlaceList';
 import PlaceDetail from './src/components/PlaceDetail/PlaceDetail';
+import { addPlace, deletePlace, selectPlace, deselectPlace } from './src/store/actions/index';
 
+import { connect } from 'react-redux';
 
-export default class App extends React.Component {
-    state = {
-        places:[],
-        selectedPlace:null
-    }
+class App extends React.Component {
 
 
     onPlaceAddedHandler = (place) => {
-        this.setState( prevState => {
-            return {
-                places: prevState.places.concat({
-                    key: Math.random(),
-                    name:place,
-                    image:{
-                        uri:'https://www.geekyexplorer.com/wp-content/uploads/2017/04/must-visit-places-siquijor-island-cambuhagay-falls.jpg'
-                    }
-                    })
-            }
-        });
-    }
-    onPlaceSelectedHandler = key => {
-        this.setState( prevState => {
-            return {
-                selectedPlace:prevState.places.find( place => {
-                    return place.key === key;
-                })
-            }
-        })
-
+        this.props.onAddPlaces(place);
     }
 
     placeDeletedHandler = () => {
-        this.setState(prevState => {
-                return {
-                    places: prevState.places.filter( place => {
-                        return place.key !== prevState.selectedPlace.key
-                    }),
-                    selectedPlace:null
-                }
-            })
+        this.props.onDeletePlaces();
+    }
+
+    onPlaceSelectedHandler = key => {
+        this.props.onSelectPlace(key);
     }
 
     modalClosed = () => {
-        this.setState({
-            selectedPlace:null
-        })
+        this.props.onDeselectPlace();
     }
 
     render() {
@@ -59,13 +32,13 @@ export default class App extends React.Component {
         return (
             <View style={styles.container}>
                 <PlaceDetail
-                    selectedPlace={this.state.selectedPlace}
+                    selectedPlace={this.props.selectedPlace}
                     onItemDeleted={this.placeDeletedHandler}
                     onItemClosed={this.modalClosed}
                 />
                 <PlaceInput onPlaceAdded={this.onPlaceAddedHandler}/>
                 <PlaceList
-                    places={this.state.places}
+                    places={this.props.places}
                     onPlaceSelected={this.onPlaceSelectedHandler}/>
             </View>
         );
@@ -83,3 +56,27 @@ const styles = StyleSheet.create({
     },
 
 });
+
+const mapStateToProps = state => {
+    return { //js object where we map keys what we want to access with props to slices of our state
+        //get them from global state (configureStore.js),
+        // via global state and
+        // then the property this slice holds in reducers/places in const initialState
+
+        places: state.places.places,
+        selectedPlace:state.places.selectedPlace
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        //connect names (keys) by our choice to props that we want to use in App
+        onAddPlaces: (name) => dispatch(addPlace(name)), //dispatch an action, use action creators
+        onDeletePlaces: () => dispatch(deletePlace()),
+        onSelectPlace: (key) => dispatch(selectPlace(key)),
+        onDeselectPlace: () => dispatch(deselectPlace()),
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
