@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, FlatList, View} from 'react-native';
+import {StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import ListItem from '../ListItem/ListItem';
 
 const PlaceList = (props) => {
 
 
     return <FlatList
+        keyboardShouldPersistTaps='always'
         style={styles.listContainer}
         data={props.places}
         renderItem={(info) => (
@@ -14,6 +15,20 @@ const PlaceList = (props) => {
                 placeImage={info.item.image}
                 onItemPressed={() => props.onPlaceSelected(info.item.key)}/>)}
     />
+
+
+    // return <TouchableOpacity
+    //             style={styles.listContainer}
+    //             data={props.places}
+    //         >
+    //     {props.places.map(place => (
+    //         <ListItem
+    //             placeName={place.name}
+    //             placeImage={place.image}
+    //             onItemPressed={() => props.onPlaceSelected(place.key)}
+    //         />
+    //     ))}
+    // </TouchableOpacity>
 }
 
 const styles = StyleSheet.create({
